@@ -68,7 +68,7 @@ These datasets are deposited in a [Galaxy library](https://usegalaxy.org/library
 
 |      |
 |------|
-|![](/src/tutorials/chip/lib.png)|
+|![](src/tutorials/chip/lib.png)|
 |<small>**Galaxy data library containing the reads**. Here you can see two replicates (`R1` and `R2`). This is single-end data. Upload datasets into a new history by selecting all datasets and clicking `to History` button. Name the new history and click `Import` (watch <a href="#" data-toggle="modal" data-target="#lib_video">this video</a>).</small>|
 
 
