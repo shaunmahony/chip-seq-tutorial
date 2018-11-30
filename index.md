@@ -62,7 +62,7 @@ There are four datasets:
   																 </div>
 </div>
 
-These datasets are deposited in a [Galaxy library](https://usegalaxy.org/library/list#folders/F050cbba300e2dbed) (watch <a href="#" data-toggle="modal" data-target="#lib_video">Video</a> on how to import data from a library):
+These datasets are deposited in a [Galaxy library](http://ecg2018.bioch.virginia.edu/galaxy/library/list#folders/Ff2db41e1fa331b3e) (watch <a href="#" data-toggle="modal" data-target="#lib_video">Video</a> on how to import data from a library):
 
 |      |
 |------|
@@ -96,7 +96,9 @@ After uploading datasets into Galaxy history we will combine all datasets into a
 
 ## Mapping
 
-In this particular case the data is of very high quality and do not need to be trimmed or postprocessed in any way before mapping. We will proceed by mapping all the data against the latest version of the yeast genome `sacCer3`:
+In this particular case the data is of very high quality and do not need to be trimmed or postprocessed in any way before mapping. We will proceed by mapping all the data against the yeast genome **`sacCer3`** with BWA:
+
+<div class="alert alert-warning" role="alert"></div>
 
 |      |
 |------|
@@ -147,7 +149,7 @@ In out experiment there are two replicates, each containing treatment and input 
 |![](src/tutorials/chip/multibamsummary.png)|
 |<small>**Running multiBAMsummary** on a collection of BAM datasets (as before you can select collection by pressing folder (<i class="far fa-folder" aria-hidden="true"></i>) button).</small>
 
-This tool breaks genome into bins of fixed size (10,000 bp in our example) and computes the number of reads falling within each bin. Here is a fragment of its output:
+This tool breaks genome into bins of fixed size (1,000 bp in our example) and computes the number of reads falling within each bin. You should use larger bins (e.g. 5,000bp) with a larger genome, but the yeast genome is only 12Mbp and regulatory signals are more compact. Here is a fragment of its output:
 
 ```
 #'chr' 'start' 'end'  'Reb1_R1'  'Input_R1'  'Input_R1'  'Reb1_R2'
@@ -263,9 +265,9 @@ We will use **NGS: DeepTools &rarr; bamCoverage**:
 |      |
 |------|
 |![](src/tutorials/chip/bam_cov_1.png)|
-|<small>**Running bamCoverage** on a collection of filtered BAM datasets (as before you can select collection by pressing folder (<i class="far fa-folder" aria-hidden="true"></i>) button). Here we set **Bin size** to `25`.  Next we set **Effective genome size** to `user specified` and enter `12000000` (approximate size of *Saccharomyces cerevisiae* genome). Because this tool has a particularly long interface we cut out important sections to make this image (see the panes below). </small>|
-|![](src/tutorials/chip/bam_cov_3.png)|
-|<small>Finally we set **Extend reads to the given average fragment size** to `150`. This is because in this particular experiment DNA was size selected to be between 120 and 170 bp for library preparation.</small>|
+|<small>**Running bamCoverage** on a collection of filtered BAM datasets (as before you can select collection by pressing folder (<i class="far fa-folder" aria-hidden="true"></i>) button). Here we set **Bin size** to `1` so that we can see the high-resolution nature of the ChIP-exo data.  Next we set **Effective genome size** to `user specified` and enter `12000000` (approximate size of *Saccharomyces cerevisiae* genome).  </small>|
+
+Note that the default behavior of bamCoverage will not perform any pseudo-extensions to the read lengths. In ChIP-seq data, we often apply a pseudo-extension up to the expected ChIP fragment size length, which has the effect of smoothing the data plots. This is not typically appropriate for ChIP-exo data, as the smoothing removes the high-resolution nature of the experimental data. In fact, we often only examing the 5' coordinate of mapped ChIP-exo reads. However, the default behavior of the bamCoverage tool (i.e. counting the full read length in terms of coverage) is fine for this example.
 
 <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `bamCoverage` on a collection of BAM datasets will generate a collection of bigWig datasets. Name this collection `coverage` (for help on how to rename a collection <a href="#" data-toggle="modal" data-target="#collection_rename_video">see this video</a>).</div>
 
@@ -289,18 +291,18 @@ We will use **NGS: DeepTools &rarr; bamCoverage**:
 </div>
 
 
-Now we can display bigWig datasets generated in the previous section in a genome browser. There is a variety of available browsers. In this tutorial we will use IGV Browser (this <a href="#" data-toggle="modal" data-target="#igv_video">video</a> shows how to display multiple datasets in IGV).
+Now we can display bigWig datasets generated in the previous section in a genome browser. There is a variety of available browsers. In this tutorial we will use the UCSC Browser.
 
 |      |
 |------|
 |![](src/tutorials/chip/cvrg_collection.png)|
 |<small>**Collection of bigWigs** produced by `bamCoverage` above. Note that in the one expanded dataset (`Reb`_R2`) there is a `display at IGV` link.</small>|
 
-Clicking this link in all four datasets (you will need to expand each dataset by clicking on it. This will expose IGV link) and focusing browser on *MPH1* (*YIR002C*) gene will produce the following image:
+Clicking this link in all four datasets (you will need to expand each dataset by clicking on it. This will expose the UCSC links) and focusing browser on the *RPA14* gene will produce the following image:
 
 |      |
 |------|
-|![](src/tutorials/chip/igv1.png)|
+|![](src/tutorials/chip/rpa14.png)|
 |<small>**Coverage** distributing within IGV. Here ChIP replicates are colored in orange and controls are blue. All four tracks were set to maximum value of `70`.</small>
 
 # Calling peaks
@@ -393,7 +395,7 @@ In the case of these data peaks are very sharp and have narrow gap between them:
 |![](src/tutorials/chip/macs1.png)|
 |<small>**Calling peaks with `MACS2` on pooled data**. Here we choose multiple inputs by pressing <i class="far fa-copy" aria-hidden="true"></i> button and selecting both ChIP datasets in **ChIP-Seq Treatment File** and both Input DNA datasets in **ChIP-Seq Control File**. We then select `Saccharomyces cerevisiae` genome as the **Effective genome size**. `MACS2`s interface is long and we split it into several pieces in this figure. See the lower section as well - it is important!</small>|
 |![](src/tutorials/chip/macs2.png)|
-|<small>In this lower part of `MACS2` interface set **Build model** to `Do not build the shifting model` (we have already done this with `preductd` in the previous step) and **Set extension size* to `30` (the number we estimated in the previous step). Finally, we will only ask `MACS2` to produce two outputs: `Peak summits` and the one it produced by default, which contains peak coordinates.</small>|
+|<small>In this lower part of `MACS2` interface set **Build model** to `Do not build the shifting model` (we have already done this with `predictd` in the previous step) and **Set extension size* to `30` (the number we estimated in the previous step). Finally, we will only ask `MACS2` to produce two outputs: `Peak summits` and the one it produced by default, which contains peak coordinates.</small>|
 
 If you set parameters as was shown above `MACS2` will produce two outputs (if it produced more just find the ones called `narrow peaks` and `summits`). Let's click on the pencil icon(<i class="fas fa-pencil-alt" aria-hidden="true"></i>) adjacent to `summits` and `narrow peak` datasets and rename then as shown below:
 
@@ -433,7 +435,7 @@ Looking at MACS2 data we have gotten the following numbers of peaks:
 
 | Pooled | Replicate 1 | Replicate 2 |
 |-------:|------------:|------------:|
-|  974   |  955        |  784        |
+|  967   |  947        |  784        |
 
 Peaks data is generated in the following format:
 
@@ -479,18 +481,18 @@ Next we will join the result of the previous operation with `Peaks R2`:
 |![](src/tutorials/chip/join2.png)|
 |<small>**Joining Pooled/R1 with R2** results with `Join` tool. Note that because we renamed the datasets they are now easily selectable.</small>|
 
-This results in 723 regions are shared among polled, R1, and R2 peaks. Let's call this **High confidence set**. Before we can use it however, let's cut out only relevant columns. Since we have produced this dataset by joining three other datasets it is three times wider (30 columns). To cut this first three columns we can use **Text Manipulation &rarr; Cut columns** tool:
+This results in 722 regions are shared among polled, R1, and R2 peaks. Let's call this **High confidence peaks**. Before we can use it however, let's cut out only relevant columns. Since we have produced this dataset by joining three other datasets it is three times wider (30 columns). To cut this first three columns we can use **Text Manipulation &rarr; Cut columns** tool:
 
 |         |
 |---------|
 |![](src/tutorials/chip/cut.png)|
 |<small>**Cutting columns** from `Join` output.</small>|
 
-<div class="alert alert-warning">Rename the last dataset as `High confidence set`. This will make it easy to find as we continue.</div>
+<div class="alert alert-warning">Rename the last dataset as `High confidence peaks`. This will make it easy to find as we continue.</div>
 
 <div class="alert alert-danger" role="alert">Using `Cut columns` tool produces a dataset of tabular type. However, by cutting the first ten columns we have created a dataset in BED format. Thus we need to let Galaxy know about that by resetting metadata as shown below.</div>
 
-Next we need to make sure that output of `Cut columns` tool has the type `BED`. To do this we will edit its metadata as show below:
+Next we need to make sure that output of `Cut columns` tool has the type `BED`. Also specify the genome build as `sacCer3`. To do this we will edit its metadata as show below:
 
 |         |
 |---------|
@@ -499,12 +501,12 @@ Next we need to make sure that output of `Cut columns` tool has the type `BED`. 
 
 ## Let's look at everything in the browser
 
-Let's visualize Merged peaks as well as Narrow peaks and Summits produced by `MACS2` in IGV by clicking on `display with IGV local` links adjacent to `Peaks pooled` and `High confidence set` datasets (you should [already have browser open](/tutorials/chip/#displaying-coverage-tracks-in-a-browser)):
+Let's visualize Merged peaks as well as Narrow peaks and Summits produced by `MACS2` in the UCSC genome browser by clicking on `display at UCSC` links adjacent to `Peaks pooled` and `High confidence peaks` datasets:
 
 |         |
 |---------|
-|![](src/tutorials/chip/igv2.png)|
-|<small>**An overview in IGV**. Here you can see original bigWig datasets along with predicted peaks.</small>
+|![](src/tutorials/chip/ucsc_rpa14_2.png)|
+|<small>**An overview in UCSC**. Here you can see original bigWig datasets along with predicted peaks.</small>
 
 ## What sequence motifs are found within peaks
 
@@ -584,11 +586,6 @@ The resulting image shows that a significant fraction of 6,692 genes present in 
 |![](src/tutorials/chip/heatmap.png)|
 |<small>**Heatmap** showing distribution of Reb1 binding sites across upstream regions of 6,692 yeast genes.</small>|
 
-# We did not fake this
+# Galaxy history
 
-This entire analysis is available as a Galaxy history [here](https://usegalaxy.org/u/aun1/h/reb1-yeast-tutorial). Import it and play with it.
-
-
-# And so it goes...
-
-Hopefully this tutorial has given you the taste for what is possible. There are more tools out there so experiment! If things do not work - complain using `Open Chat` button below or our [BioStar](https://biostar.usegalaxy.org/) channel.
+This entire analysis is available as a Galaxy history [here](http://ecg2018.bioch.virginia.edu/galaxy/u/shaunmahony/h/chip-seq-tutorial). Import it and play with it. If things do not work - complain using `Open Chat` button below or our [BioStar](https://biostar.usegalaxy.org/) channel.
