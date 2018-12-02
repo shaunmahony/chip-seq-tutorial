@@ -251,14 +251,14 @@ Now we can display bigWig datasets generated in the previous section in a genome
 |      |
 |------|
 |![](src/tutorials/chip/cvrg_collection.png)|
-|<small>**Collection of bigWigs** produced by `bamCoverage` above. Note that in the one expanded dataset (`Reb`_R2`) there is a `display at IGV` link.</small>|
+|<small>**Collection of bigWigs** produced by `bamCoverage` above. Note that in the one expanded dataset (`Reb1_R2`) there is a `display at UCSC main` link.</small>|
 
 Clicking this link in all four datasets (you will need to expand each dataset by clicking on it. This will expose the UCSC links) and focusing the browser on the *RPA14* gene will produce the following image:
 
 |      |
 |------|
 |![](src/tutorials/chip/ucsc_rpa14.png)|
-|<small>**Coverage** distributing within IGV. Here ChIP replicates are colored in orange and controls are blue. All four tracks were set to maximum value of `70`.</small>
+|<small>**Coverage** display of one Reb1 replicate at the *RPA14* gene. </small>
 
 ## Calling peaks
 
