@@ -1,7 +1,34 @@
----
-autotoc: true
-title: Analysis of ChIP-seq data
----
+#Analysis of ChIP-seq data
+
+- [Overview](#overview)
+- [Data](#data)
+  * [Reb1 ChIP-exo](#reb1-chip-exo)
+  * [Data description](#data-description)
+  * [Data location](#data-location)
+  * [Uploading](#uploading)
+- [Mapping and Post-processing](#mapping-and-post-processing)
+  * [Mapping](#mapping)
+  * [Post-processing](#post-processing)
+- [Assessment of ChIP quality](#assessment-of-chip-quality)
+  * [Correlation among samples](#correlation-among-samples)
+  * [Assessing signal strength](#assessing-signal-strength)
+- [Generating bigWig datasets for display](#generating-bigwig-datasets-for-display)
+  * [Generating bigWig datasets](#generating-bigwig-datasets)
+  * [Displaying coverage tracks in a browser](#displaying-coverage-tracks-in-a-browser)
+- [Calling peaks](#calling-peaks)
+  * [How does MACS work?](#how-does-macs-work-)
+  * [Finding peaks](#finding-peaks)
+    + [Splitting data into individual samples](#splitting-data-into-individual-samples)
+    + [Running MACS2](#running-macs2)
+- [Inspecting peaks](#inspecting-peaks)
+  * [What is in the output?](#what-is-in-the-output-)
+  * [How many peaks are common between replicates?](#how-many-peaks-are-common-between-replicates-)
+  * [Let's look at everything in the browser](#let-s-look-at-everything-in-the-browser)
+  * [What sequence motifs are found within peaks](#what-sequence-motifs-are-found-within-peaks)
+  * [Summarizing ChIP signal enrichment across all genes](#summarizing-chip-signal-enrichment-across-all-genes)
+- [Galaxy history](#galaxy-history)
+
+##Overview
 
 <small>
 This tutorial is slightly modified from the Galaxy ChIP-seq tutorial written by Anton Nekrutenko (https://galaxyproject.org/tutorials/chip/). That tutorial was inspired by efforts of [Mo Heydarian](https://galaxyproject.org/people/mo-heydarian/) and [Mallory Freeberg](https://github.com/malloryfreeberg). Tools highlighted here have been wrapped by [Björn Grüning](https://github.com/bgruening), [Marius van den Beek](https://github.com/mvdbeek) and other [IUC](https://galaxyproject.org/iuc/) members. [Dave Bouvier](https://github.com/davebx) and [Martin Cech](https://github.com/martenson) helped fine tuning and deploying tools to Galaxy's public server.
@@ -19,11 +46,11 @@ In this tutorial we will:
 - look for sequence motifs within called peaks
 - look at distribution of enriched regions across genes.
 
-# Data
+## Data
 
 Datasets for this tutorial were generated in the lab of [Frank Pugh](http://bmb.psu.edu/directory/bfp2).
 
-## Reb1 ChIP-exo
+### Reb1 ChIP-exo
 
 For this analysis we will be using [ChIP-exo](http://www.sciencedirect.com/science/article/pii/S0092867411013511) datasets. For this experiment immunoprecipitation was performed with antobodies against Reb1. Reb1 recognizes a specific sequence (`TTACCCG`) and is involved in many aspects of transcriptional regulation by all three yeast RNA polymerases and promotes formation of nucleosome-free regions (NFRs) ([Hartley & Madhani:2009](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2677553/);  [Raisner:2005](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2039754/)).
 
@@ -31,7 +58,7 @@ For this analysis we will be using [ChIP-exo](http://www.sciencedirect.com/scien
 Although this is ChIP-exo data, in this tutorial we will mostly analyze it as if it were standard ChIP-seq. We will explain peculiarities of ChIP-exo analysis in a dedicated tutorial.
 </div>
 
-## Data description
+### Data description
 
 There are four datasets:
 
@@ -42,7 +69,7 @@ There are four datasets:
 | Reb1_R2            | ChIP experiment, Replicate 2 |
 | Input_R2           | Input DNA, Replicate 2 |
 
-## Data location
+### Data location
 
 
 <!-- Modal for Library import video -->
@@ -88,13 +115,13 @@ These datasets are deposited in a [Galaxy library](http://ecg2018.bioch.virginia
 </div>
 
 
-## Uploading
+### Uploading
 
 After uploading datasets into Galaxy history we will combine all datasets into a single dataset collection. This will simplify downstream processing of the data. The process for creating a collection for this tutorial is <a href="#" data-toggle="modal" data-target="#collection_create_video">is shown here</a>.
 
-# Mapping and Post-processing
+## Mapping and Post-processing
 
-## Mapping
+### Mapping
 
 In this particular case the data is of very high quality and do not need to be trimmed or postprocessed in any way before mapping. We will proceed by mapping all the data against the yeast genome **`sacCer3`** with BWA:
 
@@ -125,7 +152,7 @@ In this particular case the data is of very high quality and do not need to be t
 </div>
 
 
-## Post-processing
+### Post-processing
 
 For post-processing we will remove all non-uniquely mapped reads. This can be done by simply filtering out all reads with [mapping quality](http://genome.sph.umich.edu/wiki/Mapping_Quality_Scores) less than `20` using **NGS: SAMtools &rarr; Filter SAM or BAM**:
 
@@ -136,11 +163,11 @@ For post-processing we will remove all non-uniquely mapped reads. This can be do
 
 <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `Filter SAM or BAM` on a collection will generate another collection of BAM files. Name this collection `filtered data` (for help on how to rename a collection <a href="#" data-toggle="modal" data-target="#collection_rename_video">see this video)</a>.</div>
 
-# Assessment of ChIP quality
+## Assessment of ChIP quality
 
 After we mapped and filtered the reads it is time to make some inferences about how good the underlying data is.
 
-## Correlation among samples
+### Correlation among samples
 
 In out experiment there are two replicates, each containing treatment and input (control) datasets. The first thing we can check is if the samples are correlated (in other words if treatment and control samples across the two replicates contain this same kind of signal). To do this we first generate read count matrix using **NGS: DeepTools &rarr; multiBamSummary**.
 
@@ -171,7 +198,7 @@ we can then feed this matrix into **NGS: DeepTools &rarr; plotCorrelation** to g
 
 Here we can see that there are good correlations between replicates (between Reb1_R1 and Reb1_R2, and between input_R1 and input_R2), while correlations between treatments (Reb1) and controls (input) are weak. This is a good sign implying that there is some signal on our data.
 
-## Assessing signal strength
+### Assessing signal strength
 
 How do we tell is we do have signal coming from ChIP enrichment? One way of doing this is Signal Extraction Scaling (SES) proposed by [Diaz:2012](https://www.degruyter.com/downloadpdf/j/sagmb.2012.11.issue-3/1544-6115.1750/1544-6115.1750.pdf). SES works as follows. Suppose we have two datasets: ChIP and Input DNA. We divide genome into *N* non-overlapping windows (*N* = 10 in the example below) and for each window compute the number of reads. This way we end up with two lists: one listing read counts for ChIP (ChIP list) and the other for Input (Input list):
 
@@ -254,11 +281,11 @@ So let's apply this to our own data using **NGS: DeepTools &rarr; plotFingerprin
 |![](src/tutorials/chip/plotfingerprint_out.png)|
 |<small>**B.** SES fingerprint of four samples: Treatments (Rab1) show characteristic shape indicating of ChIP-signal. Approximately 30% of reads are contained in several % of genome.</small>|
 
-# Generating bigWig datasets for display
+## Generating bigWig datasets for display
 
 In this section we will convert BAM files generated with `bwa` into [bigWig](https://genome.ucsc.edu/goldenpath/help/bigWig.html) format that will allow us to view read coverage distribution across the genome. We will also "pre-warm" a genome browser for displaying peaks we will be calling in the next section.
 
-## Generating bigWig datasets
+### Generating bigWig datasets
 
 We will use **NGS: DeepTools &rarr; bamCoverage**:
 
@@ -271,7 +298,7 @@ Note that the default behavior of bamCoverage will not perform any pseudo-extens
 
 <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `bamCoverage` on a collection of BAM datasets will generate a collection of bigWig datasets. Name this collection `coverage` (for help on how to rename a collection <a href="#" data-toggle="modal" data-target="#collection_rename_video">see this video</a>).</div>
 
-## Displaying coverage tracks in a browser
+### Displaying coverage tracks in a browser
 
 <!-- Modal for displaying in IGV -->
 <div class="modal fade" id="igv_video" tabindex="-1" role="dialog" aria-labelledby="igv_Vid">
@@ -305,7 +332,7 @@ Clicking this link in all four datasets (you will need to expand each dataset by
 |![](src/tutorials/chip/ucsc_rpa14.png)|
 |<small>**Coverage** distributing within IGV. Here ChIP replicates are colored in orange and controls are blue. All four tracks were set to maximum value of `70`.</small>
 
-# Calling peaks
+## Calling peaks
 
 While the peaks shown in the browser screenshot above are pretty clear and consistent across the two replicates, looking at the entire genome in the browser is hardly a sustainable way to identify all peaks. There are several ways for identifying binding events genome-wide. They are summarized in the figure below:
 
@@ -316,7 +343,7 @@ While the peaks shown in the browser screenshot above are pretty clear and consi
 
 In this tutorials we will use [MACS2](https://github.com/taoliu/MACS) peak caller.
 
-## How does MACS work?
+### How does MACS work?
 
 [MACS](https://www.ncbi.nlm.nih.gov/pubmed?cmd=search&term=18798982) (or its current version `MACS2`) performs several steps for calling peaks from paired treatment/control datasets:
 
@@ -340,11 +367,11 @@ Here is a concise description of these steps:
 
 - **Compute False Discovery Rate (FDR)** - [Feng:2012](http://www.nature.com/nprot/journal/v7/n9/full/nprot.2012.101.html) explains computing FDR in MACS as follows: <em>"When a control sample is available </em>(and you should really always use it - AN)<em>, MACS can also estimate an empirical FDR for every peak by exchanging the ChIP-seq and control samples and identifying peaks in the control sample using the same set of parameters used for the ChIP-seq sample. Because the control sample should not exhibit read enrichment, any such peaks found by MACS can be regarded as false positives. For a particular P value threshold, the empirical FDR is then calculated as the number of control peaks passing the threshold divided by the number of ChIP-seq peaks passing the same threshold." </em>
 
-## Finding peaks
+### Finding peaks
 
 In our case we have two replicates each containing ChIP and input DNA samples. We will first run `MACS2` on pooled data (combining two ChIP samples and two inputs, respectively). We will then run `MACS2` on each replicate individually. Finally, we will pick a robust set of peaks present in all three callsets.
 
-### Splitting data into individual samples
+#### Splitting data into individual samples
 
 One complication with the way we processed all data is that we have combined everything in a single dataset collection. MACS however will need for us to separate ChIP samples and controls. Fortunately for us [we have set readgroups](/tutorials/chip/#mapping) when we were mapping reads to the yeast genome. This will come handy for us right now because we will:
 
@@ -370,7 +397,7 @@ Next, we will use **NGS: SAMtools &rarr; Split** to separate merged file into in
 |![](src/tutorials/chip/split_data.png)|
 |<small>**Resulting datasets**. Each contains aligned reads from the four original conditions.</small>|
 
-### Running MACS2
+#### Running MACS2
 
 Now it is time to run MACS2. First we will use **NGS: Peak calling &rarr; MACS2 predictd** tool from the `MACS2` package. This tool will help us to find optimal parameters for running peak calling function of `MACS2`:
 
@@ -427,9 +454,9 @@ In the end you should have something like this:
 |![](src/tutorials/chip/all_macs_datasets.png)|
 |<small>**All `MACS2` datasets**. After running `MACS2` three times we should have polled, R1, and R2 datasets.</small>
 
-# Inspecting peaks
+## Inspecting peaks
 
-## What is in the output?
+### What is in the output?
 
 Looking at MACS2 data we have gotten the following numbers of peaks:
 
@@ -461,7 +488,7 @@ where columns  are:
  1. -log<sub>10</sub>*Q*-value from [Benjamini–Hochberg–Yekutieli procedure](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg.E2.80.93Yekutieli_procedure.)
  1. Relative summit position to peak start
 
-## How many peaks are common between replicates?
+### How many peaks are common between replicates?
 
 To see how many peaks are common between the pooled datasets and the two replicates we will use **Operate on Genomic Intervals &rarr; Join** tool twice.
 
@@ -499,7 +526,7 @@ Next we need to make sure that output of `Cut columns` tool has the type `BED`. 
 |![](src/tutorials/chip/bed_type.png)|
 |<small>**Setting metadata** to datatype `BED`. Click the pencil icon(<i class="fas fa-pencil-alt" aria-hidden="true"></i>) adjacent to the dataset and choose **Datatype** tab. There you will be able to set it to `BED`.</small>|
 
-## Let's look at everything in the browser
+### Let's look at everything in the browser
 
 Let's visualize Merged peaks as well as Narrow peaks and Summits produced by `MACS2` in the UCSC genome browser by clicking on `display at UCSC` links adjacent to `Peaks pooled` and `High confidence peaks` datasets:
 
@@ -508,7 +535,7 @@ Let's visualize Merged peaks as well as Narrow peaks and Summits produced by `MA
 |![](src/tutorials/chip/ucsc_rpa14_2.png)|
 |<small>**An overview in UCSC**. Here you can see original bigWig datasets along with predicted peaks.</small>
 
-## What sequence motifs are found within peaks
+### What sequence motifs are found within peaks
 
 In this experiment antibodies against Reb1 protein have been used for immunoprecipitaion. The recognition site for Reb1 is `TTACCCG` ([Badis:2008](http://www.sciencedirect.com/science/article/pii/S1097276508008423) and [Harbison:2004](http://www.nature.com/nature/journal/v431/n7004/abs/nature02800.html)). To find out which sequence motifs are found within our peaks we first need to convert coordinates into underlying sequences. This is done using the **BED tools $rarr; GetFastaBed** tool:
 
@@ -531,12 +558,12 @@ Now we can run **Motif Tools &rarr; MEME**:
 |![](src/tutorials/chip/meme1.png)|
 |<small>**Running MEME** on length-filtered FASTA sequences from the previous step. Note that **Options configuration** is set to `Advanced` and **Check reverse complement** is set to `Yes`.</small>|
 
-`MEME` generates a number of outputs. The most interesting is HTML Report. It shows that 620 regions contain `TTACCCG` motif:
+`MEME` generates a number of outputs. The most interesting is HTML Report. It shows that MEME discovers the expected `TTACCCG` motif at high frequency in the sequences:
 
 |         |
 |---------|
 |![](src/tutorials/chip/meme2.png)|
-|<small>**MEME Motif** found in 620 sequences corresponding to common peak regions.</small>|
+|<small>**MEME Motif** found from 619 sequences in the common peak regions.</small>|
 
 
 MEME can take a while to run, even on a relatively small set of sequences like this. Alternatively, you could also try running **Motif Tools &rarr; MEME-ChIP**, which performs a more comprehensive range of motif analyses and is suitable for analyzing large collections of sequences:
@@ -553,7 +580,7 @@ Unfortunately, the HTML file generated by MEME-ChIP is not viewable within Galax
 |![](src/tutorials/chip/meme-chip2.png)|
 |<small>**MEME-ChIP Results** summarizing analysis of the common peak regions.</small>|
 
-## Summarizing ChIP signal enrichment across all genes
+### Summarizing ChIP signal enrichment across all genes
 
 How many genes contain upstream regions enriched in ChIP tags. This is often represented as a heatmap:
 
@@ -601,6 +628,6 @@ The resulting image shows that a significant fraction of 6,692 genes present in 
 |![](src/tutorials/chip/heatmap.png)|
 |<small>**Heatmap** showing distribution of Reb1 binding sites across upstream regions of 6,692 yeast genes.</small>|
 
-# Galaxy history
+## Galaxy history
 
 This entire analysis is available as a Galaxy history [here](http://ecg2018.bioch.virginia.edu/galaxy/u/shaunmahony/h/chip-seq-tutorial). Import it and play with it. If things do not work - complain using `Open Chat` button below or our [BioStar](https://biostar.usegalaxy.org/) channel.
