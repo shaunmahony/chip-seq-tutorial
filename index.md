@@ -71,25 +71,7 @@ There are four datasets:
 
 ### Data location
 
-
-<!-- Modal for Library import video -->
-<div class="modal fade" id="lib_video" tabindex="-1" role="dialog" aria-labelledby="libVid">
-     <div class="modal-dialog" role="document">
-     <div class="modal-content">
-		<div class="modal-header">
-        	     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        	     	     <h4 class="modal-title" id="myModalLabel">Importing from History</h4>
-      			     	 </div>
-					<div class="modal-body">
-						<div class="embed-responsive embed-responsive-16by9">
-											<iframe class="embed-responsive-item" src="https://player.vimeo.com/video/212753639"></iframe>
-															       </div>
-															         </div>
-    																 </div>
-  																 </div>
-</div>
-
-These datasets are deposited in a [Galaxy library](http://ecg2018.bioch.virginia.edu/galaxy/library/list#folders/Ff2db41e1fa331b3e) (watch <a href="#" data-toggle="modal" data-target="#lib_video">Video</a> on how to import data from a library):
+These datasets are deposited in a [Galaxy library](http://ecg2018.bioch.virginia.edu/galaxy/library/list#folders/Ff2db41e1fa331b3e) (watch <a href="https://player.vimeo.com/video/212753639">Video</a> on how to import data from a library):
 
 |      |
 |------|
@@ -97,27 +79,9 @@ These datasets are deposited in a [Galaxy library](http://ecg2018.bioch.virginia
 |<small>**Galaxy data library containing the reads**. Here you can see two replicates (`R1` and `R2`). This is single-end data. Upload datasets into a new history by selecting all datasets and clicking `to History` button. Name the new history and click `Import` (watch <a href="#" data-toggle="modal" data-target="#lib_video">this video</a>).</small>|
 
 
-<!-- Modal for Creating collection video -->
-<div class="modal fade" id="collection_create_video" tabindex="-1" role="dialog" aria-labelledby="collection_create_Vid">
-     <div class="modal-dialog" role="document">
-     <div class="modal-content">
-		<div class="modal-header">
-        	     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        	     	     <h4 class="modal-title" id="myModalLabel">Creating a dataset collection | Single end data</h4>
-      			     	 </div>
-					<div class="modal-body">
-						<div class="embed-responsive embed-responsive-16by9">
-											<iframe class="embed-responsive-item" src="https://player.vimeo.com/video/212757252"></iframe>
-															       </div>
-															         </div>
-    																 </div>
-  																 </div>
-</div>
-
-
 ### Uploading
 
-After uploading datasets into Galaxy history we will combine all datasets into a single dataset collection. This will simplify downstream processing of the data. The process for creating a collection for this tutorial is <a href="#" data-toggle="modal" data-target="#collection_create_video">is shown here</a>.
+After uploading datasets into Galaxy history we will combine all datasets into a single dataset collection. This will simplify downstream processing of the data. The process for creating a collection for this tutorial is <a href="https://player.vimeo.com/video/212757252">is shown here</a>.
 
 ## Mapping and Post-processing
 
@@ -134,24 +98,6 @@ In this particular case the data is of very high quality and do not need to be t
 
 <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `BWA` on a collection will generate another collection of BAM files. Name this collection `mapped data` (for help on how to rename a collection <a href="#" data-toggle="modal" data-target="#collection_rename_video">see this video)</a>.</div>
 
-<!-- Modal for Renaming collection video -->
-<div class="modal fade" id="collection_rename_video" tabindex="-1" role="dialog" aria-labelledby="collection_rename_Vid">
-     <div class="modal-dialog" role="document">
-     <div class="modal-content">
-		<div class="modal-header">
-        	     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        	     	     <h4 class="modal-title" id="myModalLabel">Renaming a collection</h4>
-      			     	 </div>
-					<div class="modal-body">
-						<div class="embed-responsive embed-responsive-16by9">
-											<iframe class="embed-responsive-item" src="https://player.vimeo.com/video/212758694"></iframe>
-															       </div>
-															         </div>
-    																 </div>
-  																 </div>
-</div>
-
-
 ### Post-processing
 
 For post-processing we will remove all non-uniquely mapped reads. This can be done by simply filtering out all reads with [mapping quality](http://genome.sph.umich.edu/wiki/Mapping_Quality_Scores) less than `20` using **NGS: SAMtools &rarr; Filter SAM or BAM**:
@@ -161,7 +107,7 @@ For post-processing we will remove all non-uniquely mapped reads. This can be do
 |![](src/tutorials/chip/bam_filter.png)|
 |<small>**Filtering multi-mapped reads** by restricting the data to reads with mapping quality above 20. Note that by selecting folder (<i class="far fa-folder" aria-hidden="true"></i>) button you can select as entire collection of BAM datasets to filter at once.</small>
 
-<div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `Filter SAM or BAM` on a collection will generate another collection of BAM files. Name this collection `filtered data` (for help on how to rename a collection <a href="#" data-toggle="modal" data-target="#collection_rename_video">see this video)</a>.</div>
+<div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `Filter SAM or BAM` on a collection will generate another collection of BAM files. Name this collection `filtered data` (for help on how to rename a collection <a href="https://player.vimeo.com/video/212758694">see this video)</a>.</div>
 
 ## Assessment of ChIP quality
 
@@ -299,24 +245,6 @@ Note that the default behavior of bamCoverage will not perform any pseudo-extens
 <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `bamCoverage` on a collection of BAM datasets will generate a collection of bigWig datasets. Name this collection `coverage` (for help on how to rename a collection <a href="#" data-toggle="modal" data-target="#collection_rename_video">see this video</a>).</div>
 
 ### Displaying coverage tracks in a browser
-
-<!-- Modal for displaying in IGV -->
-<div class="modal fade" id="igv_video" tabindex="-1" role="dialog" aria-labelledby="igv_Vid">
-     <div class="modal-dialog" role="document">
-     <div class="modal-content">
-		<div class="modal-header">
-        	     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        	     	     <h4 class="modal-title" id="myModalLabel">Displaying multiple datasets in IGV</h4>
-      			     	 </div>
-					<div class="modal-body">
-						<div class="embed-responsive embed-responsive-16by9">
-											<iframe class="embed-responsive-item" src="https://player.vimeo.com/video/123414437"></iframe>
-															       </div>
-															         </div>
-    																 </div>
-  																 </div>
-</div>
-
 
 Now we can display bigWig datasets generated in the previous section in a genome browser. There is a variety of available browsers. In this tutorial we will use the UCSC Browser.
 
