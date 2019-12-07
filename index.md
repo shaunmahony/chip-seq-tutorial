@@ -52,7 +52,7 @@ Datasets for this tutorial were generated in the lab of [Frank Pugh](http://bmb.
 
 ### Reb1 ChIP-exo
 
-For this analysis we will be using [ChIP-exo](http://www.sciencedirect.com/science/article/pii/S0092867411013511) datasets. For this experiment immunoprecipitation was performed with antobodies against Reb1. Reb1 recognizes a specific sequence (`TTACCCG`) and is involved in many aspects of transcriptional regulation by all three yeast RNA polymerases and promotes formation of nucleosome-free regions (NFRs) ([Hartley & Madhani:2009](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2677553/);  [Raisner:2005](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2039754/)).
+For this analysis, we will be using [ChIP-exo](http://www.sciencedirect.com/science/article/pii/S0092867411013511) datasets. For this experiment, immunoprecipitation was performed with antibodies against Reb1. Reb1 recognizes a specific sequence (`TTACCCG`), is involved in many aspects of transcriptional regulation by all three yeast RNA polymerases, and promotes formation of nucleosome-free regions (NFRs) ([Hartley & Madhani:2009](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2677553/);  [Raisner:2005](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2039754/)).
 
 <div class="alert alert-info" role="alert">
 Although this is ChIP-exo data, in this tutorial we will mostly analyze it as if it were standard ChIP-seq. We will explain peculiarities of ChIP-exo analysis in a dedicated tutorial.
@@ -76,18 +76,18 @@ These datasets are deposited in a [Galaxy library](http://ecg2018.bioch.virginia
 |      |
 |------|
 |![](src/tutorials/chip/lib.png)|
-|<small>**Galaxy data library containing the reads**. Here you can see two replicates (`R1` and `R2`). This is single-end data. Upload datasets into a new history by selecting all datasets and clicking `to History` button. Name the new history and click `Import` (watch <a href="#" data-toggle="modal" data-target="#lib_video">this video</a>).</small>|
+|<small>**Galaxy data library containing the reads**. Here you can see two replicates (`R1` and `R2`). This is single-end data. Upload datasets into a new history by selecting all datasets and clicking the `to History` button. Name the new history and click `Import` (watch <a href="#" data-toggle="modal" data-target="#lib_video">this video</a>).</small>|
 
 
 ### Uploading
 
-After uploading datasets into Galaxy history we will combine all datasets into a single dataset collection. This will simplify downstream processing of the data. The process for creating a collection for this tutorial is <a href="https://player.vimeo.com/video/212757252">is shown here</a>.
+After uploading datasets into your Galaxy history, we will combine all datasets into a single dataset collection. This will simplify downstream processing of the data. The process for creating a collection for this tutorial is <a href="https://player.vimeo.com/video/212757252">is shown here</a>.
 
 ## Mapping and Post-processing
 
 ### Mapping
 
-In this particular case the data is of very high quality and do not need to be trimmed or postprocessed in any way before mapping. We will proceed by mapping all the data against the yeast genome **`sacCer3`** with BWA:
+In this particular case, the data is of very high quality and do not need to be trimmed or postprocessed in any way before mapping. We will proceed by mapping all the data against the yeast genome **`sacCer3`** with BWA:
 
 <div class="alert alert-warning" role="alert"></div>
 
@@ -105,24 +105,24 @@ For post-processing we will remove all non-uniquely mapped reads. This can be do
 |      |
 |------|
 |![](src/tutorials/chip/bam_filter.png)|
-|<small>**Filtering multi-mapped reads** by restricting the data to reads with mapping quality above 20. Note that by selecting folder (<i class="far fa-folder" aria-hidden="true"></i>) button you can select as entire collection of BAM datasets to filter at once.</small>
+|<small>**Filtering multi-mapped reads** by restricting the data to reads with mapping quality above 20. Note that by selecting the folder (<i class="far fa-folder" aria-hidden="true"></i>) button, you can select an entire collection of BAM datasets to filter at once.</small>
 
 <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `Filter SAM or BAM` on a collection will generate another collection of BAM files. Name this collection `filtered data` (for help on how to rename a collection <a href="https://player.vimeo.com/video/212758694">see this video)</a>.</div>
 
 ## Assessment of ChIP quality
 
-After we mapped and filtered the reads it is time to make some inferences about how good the underlying data is.
+After we map and filter the reads, it is time to make some inferences about how good the underlying data is.
 
 ### Correlation among samples
 
-In out experiment there are two replicates, each containing treatment and input (control) datasets. The first thing we can check is if the samples are correlated (in other words if treatment and control samples across the two replicates contain this same kind of signal). To do this we first generate read count matrix using **NGS: DeepTools &rarr; multiBamSummary**.
+In our experiment there are two replicates, each containing treatment and input (control) datasets. The first thing we can check is whether the samples are correlated (in other words if treatment and control samples across the two replicates contain this same kind of signal). To do this, we first generate a read count matrix using **NGS: DeepTools &rarr; multiBamSummary**.
 
 |      |
 |------|
 |![](src/tutorials/chip/multibamsummary.png)|
-|<small>**Running multiBAMsummary** on a collection of BAM datasets (as before you can select collection by pressing folder (<i class="far fa-folder" aria-hidden="true"></i>) button).</small>
+|<small>**Running multiBAMsummary** on a collection of BAM datasets (as before you can select a collection by pressing the folder (<i class="far fa-folder" aria-hidden="true"></i>) button).</small>
 
-This tool breaks genome into bins of fixed size (1,000 bp in our example) and computes the number of reads falling within each bin. You should use larger bins (e.g. 5,000bp) with a larger genome, but the yeast genome is only 12Mbp and regulatory signals are more compact. Here is a fragment of its output:
+This tool breaks the genome into bins of fixed size (1,000 bp in our example) and computes the number of reads falling within each bin. You should use larger bins (e.g. 5,000bp) with a larger genome, but the yeast genome is only 12Mbp and regulatory signals are more compact. Here is a fragment of its output:
 
 ```
 #'chr' 'start' 'end'  'Reb1_R1'  'Input_R1'  'Input_R1'  'Reb1_R2'
@@ -140,13 +140,13 @@ we can then feed this matrix into **NGS: DeepTools &rarr; plotCorrelation** to g
 |![](src/tutorials/chip/plotcorr.png)|
 |<small>**A.** Running `plotCorrelation` on output of `multiBamSummary`.</small>|
 |![](src/tutorials/chip/corr.png)|
-|<small>**B.** Heatmap of four samples: Treatments (Rab1) and controls (Input) are well correlated among themselves.</small>|
+|<small>**B.** Heatmap of four samples: Treatments (Reb1) and controls (Input) display relatively higher correlation among themselves.</small>|
 
-Here we can see that there are good correlations between replicates (between Reb1_R1 and Reb1_R2, and between input_R1 and input_R2), while correlations between treatments (Reb1) and controls (input) are weak. This is a good sign implying that there is some signal on our data.
+Here we can see that there are better correlations between replicates (between Reb1_R1 and Reb1_R2, and between input_R1 and input_R2), while correlations between treatments (Reb1) and controls (input) are weak. This is a good sign implying that there is some signal on our data.
 
 ### Assessing signal strength
 
-How do we tell is we do have signal coming from ChIP enrichment? One way of doing this is Signal Extraction Scaling (SES) proposed by [Diaz:2012](https://www.degruyter.com/downloadpdf/j/sagmb.2012.11.issue-3/1544-6115.1750/1544-6115.1750.pdf). SES works as follows. Suppose we have two datasets: ChIP and Input DNA. We divide genome into *N* non-overlapping windows (*N* = 10 in the example below) and for each window compute the number of reads. This way we end up with two lists: one listing read counts for ChIP (ChIP list) and the other for Input (Input list):
+How do we tell if we have signal coming from ChIP enrichment? One way of doing this is the Signal Extraction Scaling (SES) approach proposed by [Diaz:2012](https://www.degruyter.com/downloadpdf/j/sagmb.2012.11.issue-3/1544-6115.1750/1544-6115.1750.pdf). SES works as follows. Suppose we have two datasets: ChIP and Input DNA. We divide the genome into *N* non-overlapping windows (*N* = 10 in the example below) and for each window compute the number of reads. This way we end up with two lists: one listing read counts for ChIP (ChIP list) and the other for Input (Input list):
 
 ```
 Window   ChIP-count Input-count
@@ -163,7 +163,7 @@ Window   ChIP-count Input-count
 10         8          3
 ```
 
- We then sort the ChIP list in ascending order and move elements from Input-list to match this order:
+ We then sort the ChIP list in ascending order and move elements in the Input list to match this order:
 
 ```
  Window   ChIP-count Input-count
@@ -180,7 +180,7 @@ Window   ChIP-count Input-count
 9          45         3
 ```
 
-Now let's add another two columns to this dataset. These columns will show percentage of reads summing up to each row for ChIP and Input data. For example, 0.044 on row 3 is (1 + 2 + 2)/113 = 0.044.
+Now let's add another two columns to this dataset. These columns will show the cumulative percentages of reads up to each row for the ChIP and Input data. For example, 0.044 on row 3 is (1 + 2 + 2)/113 = 0.044.
 
 ```
  1   2   3  4      5
@@ -225,7 +225,7 @@ So let's apply this to our own data using **NGS: DeepTools &rarr; plotFingerprin
 |![](src/tutorials/chip/plotfingerprint.png)|
 |<small>**A.** Running `plotFingerprint` on filtered data (15.).</small>|
 |![](src/tutorials/chip/plotfingerprint_out.png)|
-|<small>**B.** SES fingerprint of four samples: Treatments (Rab1) show characteristic shape indicating of ChIP-signal. Approximately 30% of reads are contained in several % of genome.</small>|
+|<small>**B.** SES fingerprint of four samples: Treatments (Reb1) show a characteristic shape indicating ChIP signal. Approximately 30% of reads are contained in a small percentage of the genome.</small>|
 
 ## Generating bigWig datasets for display
 
@@ -240,13 +240,13 @@ We will use **NGS: DeepTools &rarr; bamCoverage**:
 |![](src/tutorials/chip/bam_cov_1.png)|
 |<small>**Running bamCoverage** on a collection of filtered BAM datasets (as before you can select collection by pressing folder (<i class="far fa-folder" aria-hidden="true"></i>) button). Here we set **Bin size** to `1` so that we can see the high-resolution nature of the ChIP-exo data.  Next we set **Effective genome size** to `user specified` and enter `12000000` (approximate size of *Saccharomyces cerevisiae* genome).  </small>|
 
-Note that the default behavior of bamCoverage will not perform any pseudo-extensions to the read lengths. In ChIP-seq data, we often apply a pseudo-extension up to the expected ChIP fragment size length, which has the effect of smoothing the data plots. This is not typically appropriate for ChIP-exo data, as the smoothing removes the high-resolution nature of the experimental data. In fact, we often only examing the 5' coordinate of mapped ChIP-exo reads. However, the default behavior of the bamCoverage tool (i.e. counting the full read length in terms of coverage) is fine for this example.
+Note that the default behavior of bamCoverage will not perform any pseudo-extensions to the read lengths. In ChIP-seq data, we often apply a pseudo-extension up to the expected ChIP fragment size length, which has the effect of smoothing the data plots. This is not typically appropriate for ChIP-exo data, as the smoothing removes the high-resolution nature of the experimental data. In fact, we often only examine the 5' coordinate of mapped ChIP-exo reads. However, the default behavior of the bamCoverage tool (i.e. counting the full read length in terms of coverage) is fine for this example.
 
 <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Running `bamCoverage` on a collection of BAM datasets will generate a collection of bigWig datasets. Name this collection `coverage` (for help on how to rename a collection <a href="#" data-toggle="modal" data-target="#collection_rename_video">see this video</a>).</div>
 
 ### Displaying coverage tracks in a browser
 
-Now we can display bigWig datasets generated in the previous section in a genome browser. There is a variety of available browsers. In this tutorial we will use the UCSC Browser.
+Now we can display bigWig datasets generated in the previous section in a genome browser. There are a variety of available browsers. In this tutorial we will use the UCSC Browser.
 
 |      |
 |------|
@@ -267,9 +267,9 @@ While the peaks shown in the browser screenshot above are pretty clear and consi
 |                |
 |----------------|
 |![](src/tutorials/chip/t15_peak_calling.jpg)|
-|<small>**Outline of three ChIP-seq binding event detection methods**. Peak-finding methods typically either shift the ChIP-seq tag locations in a 3′ direction by half the expected fragment length, or extend the length of the tag in a 3′ direction to be equal to the expected fragment length. Tags from opposite strands are merged to construct an unstranded tag density landscapes, and binding event locations are predicted from the locations with maximum tag coverage within each region that contains a significant enrichment of ChIP-seq tags (i.e. the peak summit). Peak-pairing methods [e.g. GeneTrack build similar tag density landscapes, but retain strandedness information and typically do not shift or extend the tag locations. Peak locations are determined on each strand separately, and nearby peaks in the correct stranded orientation within a given distance are paired together. Binding event locations are predicted from the peak-pair midpoint locations. Probabilistic binding detection methods aim to estimate the locations of binding events that could have given rise to the observed ChIP-seq tag locations. These methods begin training with initial guesses of binding event locations and a model of how tags are expected to be distributed around real ChIP-seq binding events. During each training step, every ChIP-seq tag is probabilistically associated with nearby binding events, depending on the distance between the tag and the event location. Given these probabilistic tag assignments, binding event locations are updated to achieve a better fit with their associated tags, and the model of how tags are distributed around binding events is updated to reflect the accumulation of tags around all current binding events. During the training process, binding events with few assigned tags are weeded out of the model, and the process eventually converges to a set of final binding locations. (Figure and legend from [Mahony and Pugh:2015](http://www.tandfonline.com/doi/full/10.3109/10409238.2015.1051505)).</small>
+|<small>**Outline of three ChIP-seq binding event detection methods**. Peak-finding methods typically either shift the ChIP-seq tag locations in a 3′ direction by half the expected fragment length, or extend the length of the tag in a 3′ direction to be equal to the expected fragment length. Tags from opposite strands are merged to construct an unstranded tag density landscapes, and binding event locations are predicted from the locations with maximum tag coverage within each region that contains a significant enrichment of ChIP-seq tags (i.e. the peak summit). Peak-pairing methods [e.g. GeneTrack] build similar tag density landscapes, but retain strandedness information and typically do not shift or extend the tag locations. Peak locations are determined on each strand separately, and nearby peaks in the correct stranded orientation within a given distance are paired together. Binding event locations are predicted from the peak-pair midpoint locations. Probabilistic binding detection methods aim to estimate the locations of binding events that could have given rise to the observed ChIP-seq tag locations. These methods begin training with initial guesses of binding event locations and a model of how tags are expected to be distributed around real ChIP-seq binding events. During each training step, every ChIP-seq tag is probabilistically associated with nearby binding events, depending on the distance between the tag and the event location. Given these probabilistic tag assignments, binding event locations are updated to achieve a better fit with their associated tags, and the model of how tags are distributed around binding events is updated to reflect the accumulation of tags around all current binding events. During the training process, binding events with few assigned tags are weeded out of the model, and the process eventually converges to a set of final binding locations. (Figure and legend from [Mahony and Pugh:2015](http://www.tandfonline.com/doi/full/10.3109/10409238.2015.1051505)).</small>
 
-In this tutorials we will use [MACS2](https://github.com/taoliu/MACS) peak caller.
+In this tutorials we will use the [MACS2](https://github.com/taoliu/MACS) peak caller.
 
 ### How does MACS work?
 
@@ -283,21 +283,21 @@ In this tutorials we will use [MACS2](https://github.com/taoliu/MACS) peak calle
 Here is a concise description of these steps:
 
 - **Removing redundancy** - MACS retains uniquely mapped reads and removes reads that are repeatedly mapped to the same location. This reduces effects of PCR amplification biases during library preparation.
-- **Build model and estimate fragment size** - one of the MACS inputs is the fragment size or *bandwidth*, which is approximate size of DNA fragments generated during fragmentation step of library preparation. MACS first slides a window sized at twice the bandwidth across the genome and finds instances where read counts enriched by between 10 and 30 fold relative to the genome background. It then randomly samples 1,000 of such regions and build the model. To build the model it separates reads mapping to each of the strands and build two distributions (two modes). The midpoint between the two modes is the middle of the binding size and the distance between the modes is the fragment size `d` (see Figure below).
+- **Build model and estimate fragment size** - one of the MACS inputs is the fragment size or *bandwidth*, which is approximate size of DNA fragments generated during fragmentation step of library preparation. MACS first slides a window sized at twice the bandwidth across the genome and finds instances where read counts enriched by between 10 and 30 fold relative to the genome background. It then randomly samples 1,000 of such regions and builds the model. To build the model, it separates reads mapping to each of the strands and builds two distributions (two modes). The midpoint between the two modes is the middle of the binding size and the distance between the modes is the average fragment size `d` (see Figure below).
 
 |                |
 |----------------|
 |![](src/tutorials/chip/t15_macs_model.png)|
-|<small>Peaks mapped to two strands are treated separately to build two coverage density profiles - two two modes. The distance between the modes is the fragment size `d`. This profile is build from 1,000 randomply selected enriched regions (From [Zhang:2008](https://www.ncbi.nlm.nih.gov/pubmed?cmd=search&term=18798982)).</small>|
+|<small>Peaks mapped to two strands are treated separately to build two coverage density profiles - the two modes. The distance between the modes is the fragment size `d`. This profile is build from 1,000 randomly selected enriched regions (From [Zhang:2008](https://www.ncbi.nlm.nih.gov/pubmed?cmd=search&term=18798982)).</small>|
 
 
-- **Generate peaks** - now that *d* has been defined MACS slides a window of size *2d* across the genome to identify regions significantly enriched in the ChIP sample. MACS assumes that background reads obey [Poisson distribution](https://en.wikipedia.org/wiki/Poisson_distribution). Thus given the number of reads in a given interval within the control sample we can calculate the probability of having observed number of reads in the ChIP sample (e.g., see flood example [here](https://en.wikipedia.org/wiki/Poisson_distribution#Examples_of_probability_for_Poisson_distributions)). This procedure is performed for several intervals around the examined location (*2d*, 1kb, 5kb, 10kb, and the whole genome) and the maximum value is chosen. One problem with this approach is that it only works if both samples (ChIP and control) are sequenced to the depth, which is not usually happening in practice. To correct with this MACS scales down the larger sample.
+- **Generate peaks** - now that *d* has been defined, MACS slides a window of size *2d* across the genome to identify regions significantly enriched in the ChIP sample. MACS assumes that background reads obey [Poisson distribution](https://en.wikipedia.org/wiki/Poisson_distribution). Thus, given the number of reads in a given interval within the control sample, we can calculate the probability of having the observed number of reads in the ChIP sample (e.g., see flood example [here](https://en.wikipedia.org/wiki/Poisson_distribution#Examples_of_probability_for_Poisson_distributions)). This procedure is performed for several intervals around the examined location (*2d*, 1kb, 5kb, 10kb, and the whole genome) and the maximum value is chosen. One problem with this approach is that it only works if both samples (ChIP and control) are sequenced to the same depth, which is not usually happening in practice. To correct this, MACS scales down the larger sample.
 
 - **Compute False Discovery Rate (FDR)** - [Feng:2012](http://www.nature.com/nprot/journal/v7/n9/full/nprot.2012.101.html) explains computing FDR in MACS as follows: <em>"When a control sample is available </em>(and you should really always use it - AN)<em>, MACS can also estimate an empirical FDR for every peak by exchanging the ChIP-seq and control samples and identifying peaks in the control sample using the same set of parameters used for the ChIP-seq sample. Because the control sample should not exhibit read enrichment, any such peaks found by MACS can be regarded as false positives. For a particular P value threshold, the empirical FDR is then calculated as the number of control peaks passing the threshold divided by the number of ChIP-seq peaks passing the same threshold." </em>
 
 ### Finding peaks
 
-In our case we have two replicates each containing ChIP and input DNA samples. We will first run `MACS2` on pooled data (combining two ChIP samples and two inputs, respectively). We will then run `MACS2` on each replicate individually. Finally, we will pick a robust set of peaks present in all three callsets.
+In our case we have two replicates, each containing ChIP and input DNA samples. We will first run `MACS2` on pooled data (combining two ChIP samples and two inputs, respectively). We will then run `MACS2` on each replicate individually. Finally, we will pick a robust set of peaks present in all three callsets.
 
 #### Splitting data into individual samples
 
@@ -327,7 +327,7 @@ Next, we will use **NGS: SAMtools &rarr; Split** to separate merged file into in
 
 #### Running MACS2
 
-Now it is time to run MACS2. First we will use **NGS: Peak calling &rarr; MACS2 predictd** tool from the `MACS2` package. This tool will help us to find optimal parameters for running peak calling function of `MACS2`:
+Now it is time to run MACS2. First we will use the **NGS: Peak calling &rarr; MACS2 predictd** tool from the `MACS2` package. This tool will help us to find optimal parameters for running peak calling function of `MACS2`:
 
 |                |
 |----------------|
@@ -343,7 +343,7 @@ This procedure will help us estimate the *d* parameter by performing the [cross-
 |![](src/tutorials/chip/d_r1.png)|![](src/tutorials/chip/d_r2.png)|
 |<small>Peak model and lag between strands.</small>|                |
 
-In the case of these data peaks are very sharp and have narrow gap between them: `27` and `33` bp for replicate 1 and 2, respectively. We will use an average of these values, `30`, as `--extsize` parameter for calling peaks using **NGS: Peak calling &rarr; MACS2 callpeak**:
+In the case of these data, peaks are very sharp and have narrow gap between them: `27` and `33` bp for replicate 1 and 2, respectively. We will use an average of these values, `30`, as `--extsize` parameter for calling peaks using **NGS: Peak calling &rarr; MACS2 callpeak**:
 
 |                |
 |----------------|
@@ -375,7 +375,7 @@ Next, we will run `MACS2` on BAM datasets for Replicate 1 only:
 			       </ul>
 </div>
 
-In the end you should have something like this:
+In the end, you should have something like this:
 
 |                |
 |----------------|
@@ -436,7 +436,7 @@ Next we will join the result of the previous operation with `Peaks R2`:
 |![](src/tutorials/chip/join2.png)|
 |<small>**Joining Pooled/R1 with R2** results with `Join` tool. Note that because we renamed the datasets they are now easily selectable.</small>|
 
-This results in 722 regions are shared among polled, R1, and R2 peaks. Let's call this **High confidence peaks**. Before we can use it however, let's cut out only relevant columns. Since we have produced this dataset by joining three other datasets it is three times wider (30 columns). To cut this first three columns we can use **Text Manipulation &rarr; Cut columns** tool:
+This results in 722 regions are shared among polled, R1, and R2 peaks. Let's call these the **High confidence peaks**. Before we can use them, however, let's cut out only relevant columns. Since we have produced this dataset by joining three other datasets, it is three times wider (30 columns). To cut this first three columns we can use **Text Manipulation &rarr; Cut columns** tool:
 
 |         |
 |---------|
@@ -447,7 +447,7 @@ This results in 722 regions are shared among polled, R1, and R2 peaks. Let's cal
 
 <div class="alert alert-danger" role="alert">Using `Cut columns` tool produces a dataset of tabular type. However, by cutting the first ten columns we have created a dataset in BED format. Thus we need to let Galaxy know about that by resetting metadata as shown below.</div>
 
-Next we need to make sure that output of `Cut columns` tool has the type `BED`. Also specify the genome build as `sacCer3`. To do this we will edit its metadata as show below:
+Next, we need to make sure that the output of the `Cut columns` tool has the type `BED`. Also specify the genome build as `sacCer3`. To do this we will edit its metadata as show below:
 
 |         |
 |---------|
@@ -465,7 +465,7 @@ Let's visualize Merged peaks as well as Narrow peaks and Summits produced by `MA
 
 ### What sequence motifs are found within peaks
 
-In this experiment antibodies against Reb1 protein have been used for immunoprecipitaion. The recognition site for Reb1 is `TTACCCG` ([Badis:2008](http://www.sciencedirect.com/science/article/pii/S1097276508008423) and [Harbison:2004](http://www.nature.com/nature/journal/v431/n7004/abs/nature02800.html)). To find out which sequence motifs are found within our peaks we first need to convert coordinates into underlying sequences. This is done using the **BED tools $rarr; GetFastaBed** tool:
+In this experiment, antibodies against Reb1 protein have been used for immunoprecipitaion. The recognition site for Reb1 is `TTACCCG` ([Badis:2008](http://www.sciencedirect.com/science/article/pii/S1097276508008423) and [Harbison:2004](http://www.nature.com/nature/journal/v431/n7004/abs/nature02800.html)). To find out which sequence motifs are found within our peaks, we first need to convert coordinates into underlying sequences. This is done using the **BED tools $rarr; GetFastaBed** tool:
 
 |         |
 |---------|
@@ -486,7 +486,7 @@ Now we can run **Motif Tools &rarr; MEME**:
 |![](src/tutorials/chip/meme1.png)|
 |<small>**Running MEME** on length-filtered FASTA sequences from the previous step. Note that **Options configuration** is set to `Advanced` and **Check reverse complement** is set to `Yes`.</small>|
 
-`MEME` generates a number of outputs. The most interesting is HTML Report. It shows that MEME discovers the expected `TTACCCG` motif at high frequency in the sequences:
+`MEME` generates a number of outputs. The most interesting is the HTML Report. It shows that MEME discovers the expected `TTACCCG` motif at high frequency in the sequences:
 
 |         |
 |---------|
@@ -510,14 +510,14 @@ Unfortunately, the HTML file generated by MEME-ChIP is not viewable within Galax
 
 ### Summarizing ChIP signal enrichment across all genes
 
-How many genes contain upstream regions enriched in ChIP tags. This is often represented as a heatmap:
+How many genes contain upstream regions enriched in ChIP tags? This is often represented as a heatmap:
 
 |         |
 |---------|
 |![](src/tutorials/chip/plotHeatmap_example.png)|
 |<small>**Heatmap example** from [DeepTools documentation](https://deeptools.readthedocs.io/en/latest/).</small>|
 
-To generate the heatmap we must first produce normalized datasets for the two replicated we have. This is done using **NGS: DeepTools &rarr; bamCompare** tool:
+To generate the heatmap, we must first produce normalized datasets for the two replicates we have. This is done using **NGS: DeepTools &rarr; bamCompare** tool:
 
 |         |
 |---------|
@@ -549,7 +549,7 @@ Finally, we can visualize the heatmap by using **NGS: DeepTools &rarr; plotHeatm
 |![](src/tutorials/chip/plotHeatmap.png)|
 |<small>**Drawing heatmap** with `plotHeatmap` tool. </small>|
 
-The resulting image shows that a significant fraction of 6,692 genes present in the annotation data we have used contain Reb1 binding sites within their upstream regions:
+The resulting image shows that a significant fraction of the 6,692 genes present in the annotation data we have used contain Reb1 binding sites within their upstream regions:
 
 |         |
 |---------|
@@ -558,4 +558,4 @@ The resulting image shows that a significant fraction of 6,692 genes present in 
 
 ## Galaxy history
 
-This entire analysis is available as a Galaxy history [here](http://ecg2018.bioch.virginia.edu/galaxy/u/shaunmahony/h/chip-seq-tutorial). Import it and play with it. If things do not work - complain using `Open Chat` button below or our [BioStar](https://biostar.usegalaxy.org/) channel.
+This entire analysis is available as a Galaxy history [here](http://ecg2018.bioch.virginia.edu/galaxy/u/shaunmahony/h/chip-seq-tutorial). Import it and play with it. If things do not work - complain to the course instructors!
