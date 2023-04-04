@@ -70,13 +70,13 @@ There are four datasets:
 | Input_R2           | Input DNA, Replicate 2 |
 
 ### Data location
+In Galaxy, go to "Upload Data", --> "Paste/Fetch Data", and then paste the following four URLs:
+http://e1-lugh2.science.psu.edu/data/xo/Reb1_rep1.fastq
+http://e1-lugh2.science.psu.edu/data/xo/Reb1_rep2.fastq
+http://e1-lugh2.science.psu.edu/data/xo/Input_rep1.fastq
+http://e1-lugh2.science.psu.edu/data/xo/Input_rep2.fastq
 
-These datasets are deposited in a [Galaxy library](http://ecg2019.bioch.virginia.edu/galaxy/library/list#folders/Fa799d38679e985db) (watch <a href="https://player.vimeo.com/video/212753639">Video</a> on how to import data from a library):
-
-|      |
-|------|
-|![](src/tutorials/chip/lib.png)|
-|<small>**Galaxy data library containing the reads**. Here you can see two replicates (`R1` and `R2`). This is single-end data. Upload datasets into a new history by selecting all datasets and clicking the `to History` button. Name the new history and click `Import` (watch <a href="#" data-toggle="modal" data-target="#lib_video">this video</a>).</small>|
+Then press "Start" and "Close". The files should begin uploading to your Galaxy history. 
 
 
 ### Uploading
