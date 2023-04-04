@@ -71,15 +71,12 @@ There are four datasets:
 
 ### Data location
 In Galaxy, go to "Upload Data", --> "Paste/Fetch Data", and then paste the following four URLs:
-
+```
 http://e1-lugh2.science.psu.edu/data/xo/Reb1_rep1.fastq
-
 http://e1-lugh2.science.psu.edu/data/xo/Reb1_rep2.fastq
-
 http://e1-lugh2.science.psu.edu/data/xo/Input_rep1.fastq
-
 http://e1-lugh2.science.psu.edu/data/xo/Input_rep2.fastq
-
+```
 
 Then press "Start" and "Close". The files should begin uploading to your Galaxy history. 
 
