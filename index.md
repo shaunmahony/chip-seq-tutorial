@@ -71,10 +71,15 @@ There are four datasets:
 
 ### Data location
 In Galaxy, go to "Upload Data", --> "Paste/Fetch Data", and then paste the following four URLs:
+
 http://e1-lugh2.science.psu.edu/data/xo/Reb1_rep1.fastq
+
 http://e1-lugh2.science.psu.edu/data/xo/Reb1_rep2.fastq
+
 http://e1-lugh2.science.psu.edu/data/xo/Input_rep1.fastq
+
 http://e1-lugh2.science.psu.edu/data/xo/Input_rep2.fastq
+
 
 Then press "Start" and "Close". The files should begin uploading to your Galaxy history. 
 
@@ -556,6 +561,3 @@ The resulting image shows that a significant fraction of the 6,692 genes present
 |![](src/tutorials/chip/heatmap.png)|
 |<small>**Heatmap** showing distribution of Reb1 binding sites across upstream regions of 6,692 yeast genes.</small>|
 
-## Galaxy history
-
-This entire analysis is available as a Galaxy history [here](http://ecg2019.bioch.virginia.edu/galaxy/u/shaunmahony/h/chip-seq-workshop). Import it and play with it. If things do not work - complain to the course instructors!
